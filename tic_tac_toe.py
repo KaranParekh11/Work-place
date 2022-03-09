@@ -15,7 +15,7 @@ def gameboard():
     print(raw3)
 def userturn():
     uc=int(input("enter a number between 1 to 9."))
-    while (uc<1 or uc>9):
+    while uc<1 or uc>9 :
         print("please enter valid number.")
         uc = int(input("enter a number between 1 to 9."))
     return uc
@@ -59,7 +59,7 @@ def checkwho(l):
         print("computer won.")
         exit()
     else:
-        gamestart()
+        return None
 def checkresult():
     if raw1[0]==raw1[1]==raw1[2]:
         checkwho(raw1[0])
@@ -155,8 +155,5 @@ def gamestart():
         else:
             print("something went wrong.")
         checkresult()
-    if count==9:
-        print("match draw")
-        exit()
-
+    print("match draw")
 gamestart()
