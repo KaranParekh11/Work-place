@@ -63,7 +63,7 @@ def up_date(id,data2):
                 ndicth[key]=value
             else:
                 ndicth[key]=value
-            print(ndicth)
+            # print(ndicth)
         else:
             ndictd[key]=value
     dh={"Hotel_id":id}

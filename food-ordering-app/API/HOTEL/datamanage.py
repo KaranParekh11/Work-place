@@ -1,5 +1,7 @@
 import sqlite3
 from flask import jsonify
+import uuid 
+
 
 con=sqlite3.connect("app.db",check_same_thread=False)
 cur=con.cursor()
@@ -183,11 +185,23 @@ def update_Dish_info(id,ndish_list):
                 Dish_name=i["Dish_name"]
                 Price=i["Price"]
                 # print(Dish_name,Price)
-                query = f"UPDATE Dishes SET price = '"'{}'"' WHERE hotel_id LIKE '"'{}'"' AND dish_name LIKE '"'{}'"'".format(Price,id,Dish_name)
-                cur.execute(query)
-                rows=cur.fetchall()
-                # print(rows)
-                con.commit()
+                query1=f"SELECT * FROM Dishes WHERE hotel_id LIKE '"'{}'"' AND dish_name LIKE '"'{}'"'".format(id,Dish_name)
+                cur.execute(query1)
+                row1=cur.fetchone()
+                # print(row1,"row1")
+                if row1 != None:
+                    query = f"UPDATE Dishes SET price = '"'{}'"' WHERE hotel_id LIKE '"'{}'"' AND dish_name LIKE '"'{}'"'".format(Price,id,Dish_name)
+                    cur.execute(query)
+                    con.commit()
+                else:
+                    Dish_id=uuid.uuid4().hex
+                    cur.execute("INSERT INTO Dishes VALUES (?, ?, ?, ?)", (Dish_id, Dish_name, Price,id))
+                    con.commit()
+                    # query1=f"SELECT * FROM Dishes WHERE hotel_id LIKE '"'{}'"'".format(id)
+                    # cur.execute(query1)
+                    # row2=cur.fetchall()
+                    # print(row2)
+                    
             return "hotel info updated successfully!!!"
         else:
             return "enter valid hotel id!!!"
@@ -199,9 +213,9 @@ def update_hotel_info(id,ndicth):
     li=[]
     for column in abc.description:
         li.append(column[0].capitalize())
-    print(li)
+    # print(li)
     for (key,value) in ndicth.items():
-        print(key)
+        # print(key)
         if key in li:
             try:
                 query1=f"SELECT * FROM Hotel WHERE hotel_id LIKE '"'{}'"'".format(id)
@@ -211,10 +225,10 @@ def update_hotel_info(id,ndicth):
                     query = f"UPDATE Hotel SET '"'{}'"' = '"'{}'"' WHERE hotel_id LIKE '"'{}'"'".format(key,value,id)
                     cur.execute(query)
                     con.commit()
-                    query = f"SELECT * FROM Hotel WHERE hotel_id LIKE '"'{}'"'".format(key,value,id)
-                    cur.execute(query)
-                    rows=cur.fetchone()
-                    print(rows)
+                    # query = f"SELECT * FROM Hotel WHERE hotel_id LIKE '"'{}'"'".format(key,value,id)
+                    # cur.execute(query)
+                    # rows=cur.fetchone()
+                    # print(rows)
                     x="hotel info updated successfully!!!"
                 else:
                     x="enter valid hotel id!!!"
