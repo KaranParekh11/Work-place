@@ -1,20 +1,31 @@
 import sys
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
-from test1 import engine, conn, metadata, db, inspector,create_database_tabels,User
-from sqlalchemy import Table, Column, Integer, String
+from test1 import engine, conn, metadata, db, inspector,create_database_tabels,user
+from sqlalchemy import Table, Column, Integer, String,Date
+from datetime import datetime as dt
 
 def insert_user_info(data1):
-    user_id=data1["user_id"]
-    name=data1["name"]
-    email=data1["email"]
-    dob=data1["dob"]
-    salt=data1['salt']
-    digest=data1['digest']
-    ins = db.insert(User).values(User_Id=user_id,User_name=name,Email=email,DOB=dob,Salt=salt,Digest=digest)
+    data={}
+    for key,value in data1.items():
+        key=key.lower()
+        data[key]=value
+    # print(data)
+    id=data["id"]
+    name=data["name"]
+    email=data["email"]
+    mobile=data["mobileno"]
+    dob1=data["dob"]
+    try:
+        dob=dt.strptime(dob1,"%d-%m-%Y")
+    except:
+        dob=dt.strptime(dob1,"%d/%m/%Y")
+    salt=data['salt']
+    digest=data['digest']
+    ins = db.insert(user).values(id=id,name=name,email=email,mobileno=mobile,dob=dob,salt=salt,digest=digest)
     conn.execute(ins)
 
 def get_email(email):
-    query = User.select().where(User.c.Email == email)
+    query = user.select().where(user.c.email == email)
     try:
         result = conn.execute(query)
         row = result.fetchone()
@@ -28,24 +39,24 @@ def get_email(email):
     return x
 
 def get_password(email,password):
-    query = User.select().where(User.c.Email == email)
+    query = user.select().where(user.c.email == email)
     result = conn.execute(query)
     rows = result.fetchone()
-    user_id=rows[0]
-    salt=rows[4]
-    digest=rows[5]
-    return user_id,salt,digest
+    id=rows[0]
+    salt=rows[5]
+    digest=rows[6]
+    return id,salt,digest
 
 def insert_token(email,token):
-    ins = db.update(User).values(Refresh_Token=token).where(User.c.Email == email)
+    ins = db.update(user).values(refresh_Token=token).where(user.c.email == email)
     conn.execute(ins)
 
 def update_user_table(key,value,id):
     try:
-        query = User.select().where(User.c.User_Id == id)
+        query = user.select().where(user.c.id == id)
         result = conn.execute(query)
         rows = result.fetchone()
-        ins = db.update(User).values({key : value}).where(User.c.User_Id == id)
+        ins = db.update(user).values({key : value}).where(user.c.id == id)
         conn.execute(ins)
         if rows!=None:
             return "success"
@@ -56,7 +67,7 @@ def update_user_table(key,value,id):
 
 def get_data_by_id(id):
     try:
-        query1 = User.select().where(User.c.User_Id == id)
+        query1 = user.select().where(user.c.id == id)
         result = conn.execute(query1)
         rows = result.fetchone()
         if rows!=None:
@@ -68,9 +79,10 @@ def get_data_by_id(id):
 
 def aces_token(id):
     try:
-        query1 = User.select().where(User.c.User_Id == id)
+        query1 = user.select().where(user.c.id == id)
         result = conn.execute(query1)
         rows = result.fetchone()
+        # print(rows)
         if rows!=None:
             return rows[2]
         else:
@@ -80,11 +92,11 @@ def aces_token(id):
 
 def delete_user_info(id):
     try:
-        query1 = User.select().where(User.c.User_Id == id)
+        query1 = user.select().where(user.c.id == id)
         result = conn.execute(query1)
         row2 = result.fetchone()
         if row2!=None:
-            query1 = User.delete().where(User.c.User_Id == id)
+            query1 = user.delete().where(user.c.id == id)
             conn.execute(query1)
             return "success"
         else:

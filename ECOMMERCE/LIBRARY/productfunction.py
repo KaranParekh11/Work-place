@@ -37,7 +37,7 @@ def deletebyid(id=0):
 
 def up_date(id,data2):
     ab=update_product_info(id,data2)
-    print(ab)
+    # print(ab)
     if ab == "success":
         return "product data updated successfully" , 200
     else:
@@ -53,11 +53,12 @@ def datasearch(args):
             continue
     # print(search_dict)
     if search_dict == {}:
-        return "getall",200
+        bn=get_all_product_info()
+        return bn,200
     else:
         abcd=search_product(search_dict)
         if abcd == []:
-            return "enter valid value of parameter",400
+            return "enter valid value of parameter", 200
         else:
         # print(abcd)
             dict10=[]
@@ -129,6 +130,23 @@ def getall_pagination(args):
     else:
         return "Enter valid offset and limit value!!!",400
 
+def checkproduct(data1):
+    listproduct=data1['products']
+    count=len(listproduct)
+    l2=[]
+    for i in listproduct:
+        for y in i.keys():
+            l2.append(y)
+    actuallist=['name','price','stock','description']
+    v=0
+    for i in l2:
+        if i in actuallist and len(l2)==(4*count):
+            v="success"
+        else:
+            v=0
+            break
+    return v
+    
 
     
     

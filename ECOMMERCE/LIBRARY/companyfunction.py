@@ -52,7 +52,8 @@ def datasearch(args):
             continue
     # print(search_dict)
     if search_dict == {}:
-        return "getall",200
+        bn=get_all_company_info()
+        return bn,200
     else:
         abcd=search_company(search_dict)
         # print(abcd)
@@ -140,6 +141,20 @@ def getbyid(id):
     else:
         return "enter valid user id!!!" , 401
 
+def checkput(data1):
+    list1=[]
+    v=0
+    for i in data1.keys():
+        list1.append(i)
+    l2=['category','name','website','days','time','address']
+    for i in list1:
+        if i in l2:
+            v="success"
+            continue
+        else:
+            v=0
+            break
+    return v
     
     
     

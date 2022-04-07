@@ -38,12 +38,13 @@ def update_product_info(id,nproduct_dict):
     query2 = product.select().where(product.c.id == id)
     result = conn.execute(query2)
     row2 = result.fetchone()
+    # print(li)
     if row2!=None:
         l=[]
         for key in nproduct_dict.keys():
             
             key=key.lower()
-            print(key)
+            # print(key)
             if key in li:
                 l.append(key)
             else:
@@ -54,16 +55,16 @@ def update_product_info(id,nproduct_dict):
 
         valuedict={} 
         for key,value in nproduct_dict.items():
-            if p<count:
-                str1 = key+"=:value"+str(p)+", " 
-                query1 = query1+str1    
-            else:
-                str1 =  key+"=:value"+str(p)+" WHERE product.id =:id"
-                query1 = query1 + str1 
-            valuedict["value"+str(p)]=value
-            valuedict["id"]=id 
-            p=p+1
-        print(valuedict)  
+                if p<count:
+                    str1 = key+"=:value"+str(p)+", " 
+                    query1 = query1+str1    
+                else:
+                    str1 =  key+"=:value"+str(p)+" WHERE product.id =:id"
+                    query1 = query1 + str1 
+                valuedict["value"+str(p)]=value
+                valuedict["id"]=id 
+                p=p+1
+        # print(valuedict)  
         conn.execute(query1,valuedict)       
         return "success"
     else:

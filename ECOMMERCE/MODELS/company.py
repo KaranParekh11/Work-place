@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
-from test1 import engine, conn, metadata, db, inspector, company
+from test1 import engine, conn, metadata, db, inspector, company,product
 from sqlalchemy import Table, Column, Integer, String , and_ 
 
 
@@ -23,7 +23,9 @@ def delete_company_info(id):
     row2 = result.fetchone()
     if row2!=None:
         query2 = company.delete().where(company.c.id == id)
+        query3 = product.delete().where(product.c.company_id == id)
         conn.execute(query2)
+        conn.execute(query3)
         return "success"
     else:
         return "error"

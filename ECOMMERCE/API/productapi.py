@@ -5,12 +5,20 @@ from flask import Flask,request,jsonify,make_response
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask_restful import reqparse
+from flask_expects_json import expects_json
+from API.schema import schema6,schema7
 
 class Product(Resource):
+    @expects_json(schema6)
     def post(self,id):
         data1=request.get_json()
-        x=create_product_info(id,data1)
-        return make_response(jsonify(x[0]),x[1])
+        z=checkproduct(data1)
+        if z=="success":
+            x=create_product_info(id,data1)
+            return make_response(jsonify(x[0]),x[1])
+        else:
+            return make_response(jsonify("ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!",{"BAD REQUEST":400}),400)
+
 
     @jwt_required()
     def delete(self,id):
@@ -23,6 +31,7 @@ class Product(Resource):
         return make_response(jsonify(x[0]),x[1])
 
     @jwt_required()
+    @expects_json(schema7)
     def put(self,id):
         data3=request.get_json()
         x=up_date(id,data3)
