@@ -9,6 +9,10 @@ from company import *
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
 from test1 import create_database_tabels
 from flask import jsonify
+import log
+import logging
+
+log = logging.getLogger(__name__)
 
 def create_company_info(data1):
     dicth={}
@@ -19,6 +23,7 @@ def create_company_info(data1):
     dh={"id":id}
     dicth.update(dh)
     insert_company_info(dicth)
+    log.info("company profile created successfully for company id:"+id)
     return ["Company profile created success fully" , {"company_id":id}],200
     
 
@@ -27,8 +32,10 @@ def deletebyid(id=0):
     z1=delete_company_info(id)
     # print(z1)
     if z1=="success":
+        log.info("company profile deleted successfully for company id:"+id)
         return "deleted succesfully!!!" , 200 
     else:
+        log.info("company profile cant delete for company id(invalid company id):"+id)
         return "enter valid company id!!!" , 400
 
 def up_date(id,data2):
@@ -38,8 +45,10 @@ def up_date(id,data2):
         ndicth[key]=value
     av=update_company_info(id,ndicth)
     if  av == "success":
+        log.info("company profile updated successfully for company id:"+id)
         return "company data updated successfully" , 200
     else:
+        log.warning("can't update company info for id"+id)
         return "unsuccessful operation for updating company info!!!" , 400
     
 
@@ -69,6 +78,7 @@ def datasearch(args):
                 }
             dict10.append(dict1)
         # print(dict10)
+    log.info('data search done.')
     return dict10,200
         
     
@@ -84,6 +94,7 @@ def getall_pagination(args):
         offset=int(offset)
         limit=int(limit)
         zx=get_all_company_info()
+        # print(zx)
         cx=zx["companies"]
         # print(cx)
         count=len(cx)
@@ -122,8 +133,10 @@ def getall_pagination(args):
                 "count":count,
                 "Total page":int(total_page)
               }
+        log.info("pagination done for offset:"+str(offset)+"limit"+str(limit))
         return xyz,200
     else:
+        log.warning("Enter valid offset and limit value!!!for pagination")
         return "Enter valid offset and limit value!!!",400
 
 def getbyid(id):
@@ -137,6 +150,7 @@ def getbyid(id):
             "time":abc[5],
             "address":abc[6]
             }
+        log.info("data retriev for id"+id)
         return dict10 , 200
     else:
         return "enter valid user id!!!" , 401

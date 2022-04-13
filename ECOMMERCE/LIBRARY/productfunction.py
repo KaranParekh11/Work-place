@@ -7,8 +7,12 @@ import sys
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/MODELS')
 from product import *
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
+import log
+import logging
 from test1 import create_database_tabels
 from flask import jsonify
+
+log = logging.getLogger(__name__)
 
 def create_product_info(id,data):
     product_list=[]
@@ -22,8 +26,10 @@ def create_product_info(id,data):
         product_list.append(product_dict)
     cv=insert_product_info(id,product_list)
     if cv=="success":
+        log.info("Product inserted successfully for company id:"+id)
         return ["Product inserted success fully",{"product_id":x}],200
     else:
+        log.warning("Product not inserted successfully.kindly check company id(invalid company id):"+id)
         return "Product not inserted.kindely check company id",400
 
 
@@ -31,16 +37,20 @@ def create_product_info(id,data):
 def deletebyid(id=0):
     z2=delete_product_info(id)
     if z2=="success":
+        log.info("Product data deleted successfully for product id:"+id)
         return "product data deleted succesfully!!!",200
     else:
+        log.warning("Product not deleted successfully.kindly check product id(invalid product id):"+id)
         return "enter valid product id!!!",400
 
 def up_date(id,data2):
     ab=update_product_info(id,data2)
     # print(ab)
     if ab == "success":
+        log.info("Product data updated successfully for product id:"+id)
         return "product data updated successfully" , 200
     else:
+        log.warning("Product not updated successfully.product id:"+id)
         return "unsuccessful operation for updating product data!!!",400
     
 
@@ -58,6 +68,7 @@ def datasearch(args):
     else:
         abcd=search_product(search_dict)
         if abcd == []:
+            log.warning("enter valid value of parameter for search.")
             return "enter valid value of parameter", 200
         else:
         # print(abcd)
@@ -71,6 +82,7 @@ def datasearch(args):
                     }
                 dict10.append(dict1)
             # print(dict10)
+        log.info('product search successfully.')
         return dict10,200
 
 def getall():
@@ -126,8 +138,10 @@ def getall_pagination(args):
                 "count":count,
                 "Total page":total_page
               }
+        log.info("pagination done for offset:"+str(offset)+"limit"+str(limit))
         return xyz,200
     else:
+        log.warning("Enter valid offset and limit value!!!for pagination")
         return "Enter valid offset and limit value!!!",400
 
 def checkproduct(data1):

@@ -7,13 +7,18 @@ import sys
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/MODELS')
 from user import *
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
+import log
+import logging
 from test1 import create_database_tabels
 from flask import jsonify
 from flask_jwt_extended import create_access_token,create_refresh_token
 # from flask_jwt_extended import jwt_required
 # from flask_jwt_extended import JWTManager
 
-def date_validation(dob):
+log = logging.getLogger(__name__)
+
+
+def date_validation(dob,name):
     if len(dob)==8:
         day=dob[0:2]
         month=dob[2:4]
@@ -24,28 +29,33 @@ def date_validation(dob):
         elif '/' in dob:
             dob=dob.split('/')
         else:
+            log.warning("user:"+name + " ENTER VALID DATE OR FORMAT")
             return "ENTER VALID DATE OR FORMAT"
-        print(dob)
+        # print(dob)
         day=dob[0]
         month=dob[1]
         year=dob[2]
     else:
+        log.warning("user:"+name +" Enter in dob valid Format. e.g. ddmmyyyy OR dd-mm-yyyy OR dd/mm/yyyy")
         return "Enter in valid Format. e.g. ddmmyyyy OR dd-mm-yyyy OR dd/mm/yyyy"
     isValidDate = True
     try :
         datetime.datetime(int(year),
                           int(month), int(day))  
         if int(year)<1922:
+            log.warning("user:"+name +" ENTER CORRECT BIRTH YEAR !!! TOO OLD.")
             return "ENTER CORRECT BIRTH YEAR !!! TOO OLD."
         elif int(year)>1922 and int(year)<2004:
             None
         else:
+            log.warning("user:"+name +" TOO YOUNG!! ENTER VALID D-O-B")
             return "TOO YOUNG!! ENTER VALID D-O-B"
     except ValueError :
         isValidDate = False
     if(isValidDate) :
         return True
     else :
+        log.warning("user:"+name +" Enter valid Date of Birth")
         return "Enter valid Date of Birth"
 
 
@@ -76,10 +86,13 @@ def login(data2):
             y=create_token(email) 
             y1=y["refresh_token"] 
             insert_token(email,y1)
+            log.info("user login successful. email id: "+ email)
             return ["login succesful",{"your user id":user_id},y], 200
         else:
+            log.warning("please!!enter correct password!!")
             return "please !! enter correct password !!", 401
     else:
+        log.warning("Enter correct email")
         return "Enter correct email", 401
 
 def checkmobile(mobileno):
@@ -105,21 +118,26 @@ def checkpassword(password):
         return False
 
 def create(data1):
+    name=data1["name"]
     email=data1["email"]
     password=data1["password"]
     mobile=data1["mobileno"]
     dob=data1["dob"]
-    w=date_validation(dob)
+    w=date_validation(dob,name)
     z=checkmobile(mobile)
     x=checkemail(email)
     y=checkpassword(password)
     if x==False and y==False:
+        log.warning('user:'+name +" enter valid email and password!!")
         return "enter valid email and password!!", 400
     elif x==False and y==True:
+        log.warning('user:'+name +" enter valid email!")
         return "enter valid email!", 400
     elif x==True and y==False:
+        log.warning('user:'+name +" enter valid password!!")
         return "enter valid password!!", 400
     elif z==False:
+        log.warning('user:'+name +" enter valid mobile no")
         return "enter valid mobile no",400
     elif w!=True:
         return w,400
@@ -134,6 +152,7 @@ def create(data1):
         del data1["password"]
         data1.update(dict1) 
         insert_user_info(data1)
+        log.info("user:"+name +" profile created success fully")
         return "profile created success fully", 201
 
 def authenticate(newpass,salt,digest):
@@ -151,8 +170,10 @@ def deletebyid(id=0):
     # print(z1)
     # view_data()
     if z1=="success":
+        log.info("data deleted succesfully of user id: "+id)
         return "deleted succesfully!!!" , 200
     else:
+        log.warning("not a valid user id for deleting data.wrong user id: "+id)
         return "enter valid user id!!!" , 400
 
 def up_date(id,data2):
@@ -163,6 +184,7 @@ def up_date(id,data2):
         if key=="password":
             y=checkpassword(value)
             if y==False:
+                log.warning("Enter valid Password for update.user id: "+id)
                 return "Enter valid Password for update",400
             else:
                 np=hash_password(value)
@@ -174,13 +196,15 @@ def up_date(id,data2):
         elif key=="email":
             z=checkemail(value)
             if z==False:
+                log.warning("Enter valid email for update.user id: "+id)
                 return "Enter valid email for update",400
             else:
                 x = update_user_table(key,value,id)
         elif key=="mobileno":
             z=checkmobile(value)
             if z==False:
-                return "Enter valid email for update",400
+                log.warning("Enter valid mobileno for update.user id: "+id)
+                return "Enter valid mobileno for update",400
             else:
                 value=setmobileno(value)
                 x = update_user_table(key,value,id)
@@ -193,8 +217,10 @@ def up_date(id,data2):
         else:
             x = update_user_table(key,value,id)
     if x == "success":
+        log.info("data updated successfully for user id: "+id)
         return "data updated successfully", 200
     else:
+        log.warning("enter correct user id for update!!!wrong id is: "+id)
         return "enter correct user id for update!!!" , 400
     # view_data()
    
@@ -212,6 +238,7 @@ def getbyid(id):
         ]}
         return dict , 200
     else:
+        log.warning("enter valid user id for get by id!!!wrong id is: "+id)
         return "enter valid user id!!!" , 401
 
 def create_token(email):
@@ -226,6 +253,7 @@ def create_newaccess_tokens(id):
     if hg!=None:
         identity1=hg[0]
     else:
+        log.warning("enter valid user id!!wrong id is: "+id)
         return "enter valid user id" , 401
     expiers=datetime.timedelta(minutes=15)
     new_access_token=create_access_token(identity=identity1, expires_delta=expiers)
@@ -233,8 +261,10 @@ def create_newaccess_tokens(id):
     fl=update_user_table("refresh_Token",new_refresh_token,id)
     # print(fl)
     if fl=="success":
+        log.info("refresh token and access token created successfully for user id:"+id)
         return {"new_access_token": new_access_token,"new_refresh_token":new_refresh_token},200
     else:
+        log.warning("enter correct user id or refresh token!!!")
         return "enter correct user id or refresh token!!!" , 401
     
 def checkput1(data1):

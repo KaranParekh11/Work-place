@@ -2,7 +2,7 @@ from flask import Flask,make_response,jsonify
 from flask_restful import Resource,Api
 # from API.companyapi import *
 # from API.productapi import *
-from flask_jwt_extended import jwt_required
+# from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 # from flask_marshmallow import Marshmallow
 import sys

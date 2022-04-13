@@ -2,7 +2,9 @@ import sys
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
 from test1 import engine, conn, metadata, db, inspector, company,product
 from sqlalchemy import Table, Column, Integer, String , and_ 
-
+import log
+import logging
+log = logging.getLogger(__name__)
 
 def insert_company_info(dicth):
 
@@ -47,8 +49,10 @@ def update_company_info(id,ndicth):
                 conn.execute(ins)
                 x = "success"
             else:
-                x = "enter valid hotel id!!!"
+                log.warning('enter valid company id for update company data of company id:'+id)
+                x = "enter valid company id!!!"
         else:
+            log.warning('enter valid column(feature) for update company data of company id:'+id)
             x = "enter valid data for update!!!"
     return x
 
@@ -93,7 +97,7 @@ def search_company(search_dict):
 def get_all_company_info():
     result = conn.execute("SELECT company.id, company.name, website, category, time, days,address,product.name, price FROM product INNER JOIN company ON company.id = product.company_id")
     rows=result.fetchall()
-    # print(rows)
+    print(rows)
     # for i in rows:
     #     print(i)
     l2=[]
@@ -129,5 +133,6 @@ def get_all_company_info():
                 k=0   
     dict10={}  
     dict10["companies"]=l2
+
     return dict10
     

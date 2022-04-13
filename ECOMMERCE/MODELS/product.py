@@ -1,9 +1,12 @@
 import sys
 import uuid
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
+import log
+import logging
 from test1 import engine, conn, metadata, db, inspector,product,company
 from sqlalchemy import Table, Column, Integer, String, ForeignKey, and_
 
+log = logging.getLogger(__name__)
 
 def insert_product_info(id,product_list):
     query1 = company.select().where(company.c.id == id)
@@ -48,6 +51,7 @@ def update_product_info(id,nproduct_dict):
             if key in li:
                 l.append(key)
             else:
+                log.warning("Enter valid feature(column) for updating product info.")
                 return "enter valid data for update"
         count=len(l)
         p=1

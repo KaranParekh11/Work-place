@@ -7,16 +7,30 @@ from flask_restful import Resource
 from flask_restful import reqparse
 from flask_expects_json import expects_json
 from API.schema import schema6,schema7
+sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
+import log
+import logging
+
+log = logging.getLogger(__name__)
+
 
 class Product(Resource):
     @expects_json(schema6)
     def post(self,id):
         data1=request.get_json()
         z=checkproduct(data1)
-        if z=="success":
-            x=create_product_info(id,data1)
-            return make_response(jsonify(x[0]),x[1])
+        list1=[]
+        for i in data1.keys():
+            list1.append(i)
+        if len(list1)==1:
+            if z=="success":
+                x=create_product_info(id,data1)
+                return make_response(jsonify(x[0]),x[1])
+            else:
+                log.warning("invalid product specification")
+                return make_response(jsonify("invalid product specification"),400)
         else:
+            log.warning('ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!for product sign up')
             return make_response(jsonify("ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!",{"BAD REQUEST":400}),400)
 
 

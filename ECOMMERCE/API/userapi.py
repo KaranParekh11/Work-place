@@ -1,5 +1,8 @@
 import sys
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/LIBRARY')
+sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
+import log
+import logging
 from userfunction import *
 from flask import Flask,request,jsonify,make_response
 from flask_jwt_extended import jwt_required
@@ -7,11 +10,13 @@ from flask_restful import Resource
 from flask_expects_json import expects_json
 from API.schema import schema1,schema2,schema3
 
+log = logging.getLogger(__name__)
 
 class Users(Resource):        
     @expects_json(schema1)
     def post(self):
         data1=request.get_json()
+        # print(data1)
         list1=[]
         for i in data1.keys():
             list1.append(i)
@@ -19,6 +24,7 @@ class Users(Resource):
             x=create(data1)
             return make_response(jsonify(x[0]),x[1])
         else:
+            log.warning('ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!for user sign up')
             return make_response(jsonify("ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!",{"BAD REQUEST":400}),400)
 
 
@@ -43,6 +49,7 @@ class User(Resource):
             x=up_date(id,data1)
             return make_response(jsonify(x[0]),x[1])
         else:
+            log.warning('ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!for data update.user id:'+id)
             return make_response(jsonify("ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!",{"BAD REQUEST":400}),400)
 
     @expects_json(schema2)
@@ -55,6 +62,7 @@ class User(Resource):
             x=login(data2)
             return make_response(jsonify(x[0]),x[1])
         else:
+            log.warning('ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!for login user')
             return make_response(jsonify("ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!",{"BAD REQUEST":400}),400)
         
         

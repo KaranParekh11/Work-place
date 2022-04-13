@@ -52,56 +52,47 @@ def insert_token(email,token):
     conn.execute(ins)
 
 def update_user_table(key,value,id):
-    try:
-        query = user.select().where(user.c.id == id)
-        result = conn.execute(query)
-        rows = result.fetchone()
-        ins = db.update(user).values({key : value}).where(user.c.id == id)
-        conn.execute(ins)
-        if rows!=None:
-            return "success"
-        else:
-            return "error1"
-    except:
-        return "error2"
-
+    query = user.select().where(user.c.id == id)
+    result = conn.execute(query)
+    rows = result.fetchone()
+    ins = db.update(user).values({key : value}).where(user.c.id == id)
+    conn.execute(ins)
+    if rows!=None:
+        return "success"
+    else:
+        return "error1"
+    
 def get_data_by_id(id):
-    try:
-        query1 = user.select().where(user.c.id == id)
-        result = conn.execute(query1)
-        rows = result.fetchone()
-        if rows!=None:
-            return rows
-        else:
-            return "error" 
-    except:
-        return "error"
+    query1 = user.select().where(user.c.id == id)
+    result = conn.execute(query1)
+    rows = result.fetchone()
+    if rows!=None:
+        return rows
+    else:
+        return "error" 
+    
 
 def aces_token(id):
-    try:
-        query1 = user.select().where(user.c.id == id)
-        result = conn.execute(query1)
-        rows = result.fetchone()
-        # print(rows)
-        if rows!=None:
-            return rows[2]
-        else:
-            return "error" 
-    except:
-        return "error"
+    query1 = user.select().where(user.c.id == id)
+    result = conn.execute(query1)
+    rows = result.fetchone()
+    # print(rows)
+    if rows!=None:
+        return rows[2]
+    else:
+        return "error" 
+   
 
 def delete_user_info(id):
-    try:
-        query1 = user.select().where(user.c.id == id)
-        result = conn.execute(query1)
-        row2 = result.fetchone()
-        if row2!=None:
-            query1 = user.delete().where(user.c.id == id)
-            conn.execute(query1)
-            return "success"
-        else:
-            return "error"
-    except:
+    query1 = user.select().where(user.c.id == id)
+    result = conn.execute(query1)
+    row2 = result.fetchone()
+    if row2!=None:
+        query1 = user.delete().where(user.c.id == id)
+        conn.execute(query1)
+        return "success"
+    else:
         return "error"
+
 
 

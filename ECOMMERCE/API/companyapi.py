@@ -1,5 +1,8 @@
 import sys
 sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/LIBRARY')
+sys.path.insert(0,'E:/KARAN PY/ECOMMERCE/UTILS')
+import log
+import logging
 from companyfunction import *
 from flask import Flask,request,jsonify,make_response
 from flask_jwt_extended import jwt_required
@@ -7,6 +10,10 @@ from flask_restful import Resource
 from flask_restful import reqparse
 from flask_expects_json import expects_json
 from API.schema import schema4,schema5
+
+log = logging.getLogger(__name__)
+
+
 
 class Company(Resource):
     @expects_json(schema4)
@@ -19,6 +26,7 @@ class Company(Resource):
             x=create_company_info(data1)
             return make_response(jsonify(x[0]),x[1])
         else:
+            log.warning('ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!for company sign up')
             return make_response(jsonify("ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!",{"BAD REQUEST":400}),400)
         
 
@@ -41,6 +49,7 @@ class Company(Resource):
             x=up_date(id,data3)
             return make_response(jsonify(x[0]),x[1])
         else:
+            log.warning('ENTER VALID DATA. NO EXTRA DATA ACCEPTED!!!for update company data ')
             return make_response(jsonify("ENTER VALID DATA AND NO EXTRA DATA ACCEPTED!!!",{"BAD REQUEST":400}),400)
 
 class Search(Resource):
